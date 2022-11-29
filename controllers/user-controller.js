@@ -55,7 +55,7 @@ module.exports = {
       .then((user) =>
         !user
           ? res.status(404).json({ message: "No User with this ID" })
-          : Thought.deleteMany({ _id: { $in: user.thoughts } })
+          : Thoughts.deleteMany({ _id: { $in: user.thoughts } })
       )
       .then(() => res.json({ message: "User and Thought deleted!" }))
       .catch((err) => res.status(500).json(err));

@@ -22,7 +22,7 @@ module.exports = {
   createThought(req, res) {
     Thoughts.create(req.body)
       .then(({ _id }) => {
-        return User.findOneAndUpdate(
+        return Users.findOneAndUpdate(
           { _id: req.body.userId },
           { $push: { thoughts: _id } },
           { new: true }
@@ -55,7 +55,7 @@ module.exports = {
       .then((thought) =>
         !thought
           ? res.status(404).json({ message: "No thought with this ID" })
-          : User.findOneAndUpdate(
+          : Users.findOneAndUpdate(
               { thoughts: req.params.thoughtId },
               { $pull: { thoughts: req.params.thoughtId } },
               { new: true }
