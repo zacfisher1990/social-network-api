@@ -7,19 +7,24 @@ module.exports = {
       .then((user) => res.json(user))
       .catch((err) => res.status(500).json(err));
   },
-  //Get single user
-  getSingleUser(req, res) {
+   // Get single user by ID
+   getUsersById(req, res) {
     Users.findOne({ _id: req.params.userId })
-      .populate("thoughts")
-      .populate("friends")
-      .select("-__v")
-      .then((user) =>
-        !user
-          ? res.status(404).json({ message: "No User find with that ID!" })
-          : res.json(user)
-      )
-      .catch((err) => res.status(500).json(err));
-  },
+    .select('-__v')
+    // return if no user is found 
+    .then(user => {
+        if(!user) {
+            res.status(404).json({message: 'No User with this ID'});
+            return; 
+        }
+        res.json(user)
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(400).json(err)
+    })
+},
+
   //create a user
   createUser(req, res) {
     Users.create(req.body)
@@ -38,7 +43,7 @@ module.exports = {
     )
       .then((user) =>
         !user
-          ? res.status(404).json({ message: "No User find with this ID!" })
+          ? res.status(404).json({ message: "No User with this ID" })
           : res.json(user)
       )
       .catch((err) => res.status(500).json(err));
@@ -49,7 +54,7 @@ module.exports = {
     Users.findOneAndDelete({ _id: req.params.userId })
       .then((user) =>
         !user
-          ? res.status(404).json({ message: "No User find with this ID!" })
+          ? res.status(404).json({ message: "No User with this ID" })
           : Thought.deleteMany({ _id: { $in: user.thoughts } })
       )
       .then(() => res.json({ message: "User and Thought deleted!" }))
